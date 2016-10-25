@@ -1,5 +1,4 @@
 
-    <form id="genericForm" class="form-horizontal">
         <fieldset>
             <input id="${bean.primaryKey.name}" name="${bean.primaryKey.name}" type="hidden" >               
 #foreach($attribute in $bean.attributes)
@@ -28,7 +27,7 @@
 		#set ($placeholderText = "")
 		#set ($helpText = "")
 		#set ($inputIcon = "fa-envelope-o")		
-	#elseif(${attribute.name.toLowerCase().contains("postcode")} )
+	#elseif(${attribute.name.toLowerCase().contains("postcode")})
 		#set ($placeholderText = "XX99 9XX")
 		#set ($helpText = "Enter a valid post-code")
 		#set ($inputIcon = "fa-envelope-o")
@@ -58,13 +57,13 @@
               <div class="col-md-6">
 			  	<div class="input-group">
               		<span class="input-group-addon"><i class="fa $inputIcon fa-fw" aria-hidden="true"></i></span>     
- 	            	<input id="${attribute.name}" name="${attribute.name}" type="text" placeholder="$placeholderText" class="form-control input-md"#if(${attribute.mandatory}) required#end>
+ 	            	<input id="${attribute.name}" name="${attribute.name}" type="text" placeholder="$placeholderText" class="form-control input-md"#if(${attribute.columnType.toLowerCase()}=="varchar") maxlength="${attribute.columnSize}"#end#if(${attribute.mandatory}) required#end>
               	</div>
               	<span class="help-block">$helpText</span>  
               </div>              	
 #else
               <div class="col-md-6">
-                <input id="${attribute.name}" name="${attribute.name}" type="text" placeholder="$placeholderText" class="form-control input-md"#if(${attribute.mandatory}) required#end>
+                <input id="${attribute.name}" name="${attribute.name}" type="text" placeholder="$placeholderText" class="form-control input-md"#if(${attribute.columnType.toLowerCase()}=="varchar") maxlength="${attribute.columnSize}"#end#if(${attribute.mandatory}) required#end>
               	<span class="help-block">$helpText</span>  
               </div>
 #end
@@ -84,8 +83,6 @@
     			</div>
   			</div>             
         </fieldset>
-    </form>
-    
     
 <!--   pattern="^[a-zA-Z]{1,}$" maxlength="20" -->     
     

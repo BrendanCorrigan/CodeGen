@@ -10,6 +10,9 @@ $(document).ready(function () {
 	var rootURL = "services";
 
     var selectedId;
+
+    // Set the validator for the form
+    $('#genericForm').validator();
     
 	// Set update entry fields to use datepicker
 	$('#genericForm .date').datepicker ({
@@ -69,8 +72,8 @@ $(document).ready(function () {
             "commands": function(column, row)
             {
 
-                return "<button type='button' class='btn btn-small btn-default command-edit' data-row-id='" + row.id + "' data-toggle='modal' data-target='#genericModal'><span class='fa fa-pencil'></span></button> " + 
-                "<button type='button' class='btn btn-danger btn-small btn-default command-delete' data-row-id='" + row.id + "' data-toggle='modal' data-target='#confirmDeletion'><span class='fa fa-trash-o'></span></button>";
+                return "<button type='button' class='btn btn-small btn-default command-edit' data-row-id='" + row.${bean.primaryKey.name} + "' data-toggle='modal' data-target='#genericModal'><span class='fa fa-pencil'></span></button> " + 
+                "<button type='button' class='btn btn-danger btn-small btn-default command-delete' data-row-id='" + row.${bean.primaryKey.name} + "' data-toggle='modal' data-target='#confirmDeletion'><span class='fa fa-trash-o'></span></button>";
             }
         }
     }).on("loaded.rs.jquery.bootgrid", function()
@@ -79,8 +82,10 @@ $(document).ready(function () {
         grid.find(".command-edit").on("click", function(e)
         {
             selectedId = $(this).data("row-id");
-            var selectedItem = $.grep(tableData, function(e){ return e.id == selectedId; });
+            var selectedItem = $.grep(tableData, function(e){ return e.${bean.primaryKey.name} == selectedId; });
                         
+            $('#genericForm')[0].reset()
+            $('#genericForm').validator('destroy').validator()            
             populateForm({});
             //populateForm(selectedItem[0]);
             get${bean.name}(selectedId);
@@ -99,7 +104,7 @@ $(document).ready(function () {
             
             selectedId = Number($(this).data("row-id")); 
 
-            var selectedItem = $.grep(tableData, function(e){ return e.id == selectedId; });
+            var selectedItem = $.grep(tableData, function(e){ return e.${bean.primaryKey.name} == selectedId; });
             console.log("selectedItem: " + selectedItem);
             console.log("You pressed delete on row: " + selectedId + " --> " + JSON.stringify(selectedItem[0]));        
 
@@ -137,13 +142,17 @@ $(document).ready(function () {
         $('#updateConfirmButton').hide();
         $('#modeText').text("Create a new record...");
         
-		populateForm({});
+        $('#genericForm')[0].reset()
+        $('#genericForm').validator('destroy').validator()
+	populateForm({});
         
 
     });
         
     $('#createConfirmButton').on('click', function () {
 
+    	if (!$('#createConfirmButton').hasClass('disabled')) {
+    		console.log("The Confirm Create button has been disabled.")
 		var newEntry = get${bean.name}FromForm();
 		
         console.log("CONFIRM UPDATE PRESSED FOR ID: " + JSON.stringify(newEntry));
@@ -161,6 +170,7 @@ $(document).ready(function () {
         } else {
             console.log("ID IS NOT NULL: " + newEntry.${bean.primaryKey.name});
         }
+    	}
 
     });    
     
@@ -171,6 +181,9 @@ $(document).ready(function () {
     
     $('#updateConfirmButton').on('click', function () {
 
+    	if (!$('#updateConfirmButton').hasClass('disabled')) {
+    		console.log("The Confirm Update button has been disabled.")
+    	
         var updatedEntry = get${bean.name}FromForm();
         
         // sanity check the data...
@@ -188,6 +201,7 @@ $(document).ready(function () {
             // have different keys. This is a problem.
 
             console.log("Updated ID and Selected Item ID don't match: " + updatedEntry.${bean.primaryKey.name} + " vs " + selectedId);
+	        }
 
         }
 
@@ -280,7 +294,7 @@ $(document).ready(function () {
 			
 			success : function ( data, status, jqXHR ) {
                 
-                var selectedEntry = $.grep(tableData, function(e){ return e.id == selectedId; });
+                var selectedEntry = $.grep(tableData, function(e){ return e.${bean.primaryKey.name} == selectedId; });
 
                 var index = tableData.indexOf(selectedEntry[0]);
                 if (index > -1) {
@@ -289,14 +303,11 @@ $(document).ready(function () {
                     // Remove the row from the table.
                     $("#genericTable").bootgrid('remove', [selectedId]);
 
-                }
-                            
-				
+                }				
 			},
 			
 			error : function (jqXHR, status) {
-				console.log("delete${bean.name} status: " + status);
-												
+				console.log("delete${bean.name} status: " + status);												
 			}		
 			
 		});
@@ -347,7 +358,7 @@ $(document).ready(function () {
 			success : function ( data, status, jqXHR ) {
 				console.log("update${bean.name} - status: " + status + " data: " + JSON.stringify(data));
                 
-                var selectedEntry = $.grep(tableData, function(e){ return e.id == selectedId; });
+                var selectedEntry = $.grep(tableData, function(e){ return e.${bean.primaryKey.name} == selectedId; });
 
                 var index = tableData.indexOf(selectedEntry[0]);
                 if (index > -1) {
@@ -360,8 +371,8 @@ $(document).ready(function () {
                 }                				
 			},
 			
-			error : function (jqXHR, status) {
-				console.log("update${bean.name} - status: " + status);
+			error : function (jqXHR, status, text) {
+				console.log("update${bean.name} - status: " + status + " text: " + text);
 												
 			}
 						

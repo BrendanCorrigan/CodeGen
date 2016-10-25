@@ -150,6 +150,9 @@
             <span id="modeText"></span>
         </h4>
       </div>
+            
+      <form id="genericForm" class="form-horizontal">
+      
       <div class="modal-body">
 
 #parse("templates/src/main/webapp/formElement.html")
@@ -160,6 +163,9 @@
         <button id="updateConfirmButton" type="button" class="btn btn-primary btn-warning" >Save changes</button>
         <button id="createConfirmButton" type="button" class="btn btn-primary btn-warning" >Add Record</button>
       </div>
+      
+      </form>
+      
     </div>
   </div>
 </div>      
@@ -212,6 +218,9 @@
     <!-- Date picker for bootstrap -->
     <script src="lib/bootstrap-datepicker.min.js"></script>
     <script src="locales/bootstrap-datepicker.en-GB.min.js"></script>  
+
+    <!-- Validator helper class -->
+    <script src="lib/validator.min.js"></script>  
       
     <!-- Application JS -->  
     <script src="js/${bean.name}.js"></script>
