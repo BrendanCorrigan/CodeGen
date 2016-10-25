@@ -1,0 +1,91 @@
+
+    <form id="genericForm" class="form-horizontal">
+        <fieldset>
+            <input id="${bean.primaryKey.name}" name="${bean.primaryKey.name}" type="hidden" >               
+#foreach($attribute in $bean.attributes)
+#if($attribute.visible)
+	#if(${attribute.columnType.toLowerCase()}=="date")
+		#set ($placeholderText = "dd/mm/ccyy")
+		#set ($helpText = "Enter a valid date as dd/mm/ccyy")
+		#set ($inputIcon = "fa-calendar")
+	#elseif(${attribute.columnType.toLowerCase()}=="timestamp")        
+		#set ($placeholderText ="dd/mm/ccyy hh:mm:ss")
+		#set ($helpText ="Enter a valid timestamp as dd/mm/ccyy hh:mm:ss")
+		#set ($inputIcon = "fa-calendar")
+	#elseif(${attribute.name.toLowerCase().contains("email")})
+		#set ($placeholderText = "name@address.com")
+		#set ($helpText = "Enter a valid eMail address")
+		#set ($inputIcon = "fa-at")
+	#elseif (${attribute.name.toLowerCase().contains("website")})
+		#set ($placeholderText = "www.somewebsite.com")
+		#set ($helpText = "Enter a valid website address")
+		#set ($inputIcon = "fa-home")
+	#elseif(${attribute.name.toLowerCase().contains("phone")} || ${attribute.name.toLowerCase().contains("mobile")})
+		#set ($placeholderText = "+(44) 123 456689")
+		#set ($helpText = "Enter a valid phone number")
+		#set ($inputIcon = "fa-phone")
+	#elseif(${attribute.name.toLowerCase().contains("address")} )
+		#set ($placeholderText = "")
+		#set ($helpText = "")
+		#set ($inputIcon = "fa-envelope-o")		
+	#elseif(${attribute.name.toLowerCase().contains("postcode")} )
+		#set ($placeholderText = "XX99 9XX")
+		#set ($helpText = "Enter a valid post-code")
+		#set ($inputIcon = "fa-envelope-o")
+	#elseif(${attribute.name.toLowerCase().contains("user")} )
+		#set ($placeholderText = "")
+		#set ($helpText = "")
+		#set ($inputIcon = "fa-user")
+	#else
+		#set ($placeholderText = "")
+		#set ($helpText="")
+		#set ($inputIcon = "")
+	#end
+ 
+            <!-- Input for ${attribute.name} -->
+            <div class="form-group">
+              <label class="col-md-4 control-label" for="${attribute.name}">${attribute.name}#if(${attribute.mandatory})<span style="color:red;">*</span>#end</label>              
+#if(${attribute.columnType.toLowerCase()}=="date" ||${attribute.columnType.toLowerCase()}=="timestamp")                                 
+              <div class="col-md-6">
+                  <div class="input-group">
+                    <span class="input-group-addon"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i></span>     
+                    <input name="${attribute.name}" class="form-control input-md date" id="${attribute.name}" type="text" placeholder="$placeholderText"#if(${attribute.mandatory}) required#end>
+                  </div>
+              	<span class="help-block">$helpText</span>  
+              </div>
+#else
+#if($inputIcon != "")
+              <div class="col-md-6">
+			  	<div class="input-group">
+              		<span class="input-group-addon"><i class="fa $inputIcon fa-fw" aria-hidden="true"></i></span>     
+ 	            	<input id="${attribute.name}" name="${attribute.name}" type="text" placeholder="$placeholderText" class="form-control input-md"#if(${attribute.mandatory}) required#end>
+              	</div>
+              	<span class="help-block">$helpText</span>  
+              </div>              	
+#else
+              <div class="col-md-6">
+                <input id="${attribute.name}" name="${attribute.name}" type="text" placeholder="$placeholderText" class="form-control input-md"#if(${attribute.mandatory}) required#end>
+              	<span class="help-block">$helpText</span>  
+              </div>
+#end
+#end
+            </div>
+#else
+
+            <!-- ${attribute.name} is hidden -->
+            <input id="${attribute.name}" name="${attribute.name}" type="hidden" >
+#end
+#end    
+  			
+  			<div class="form-group">
+  				<div class="col-md-4"></div>
+  				<div class="col-md-6">
+    				<span class="text-muted"><em><span style="color:red;">*</span> Indicates required field</em></span>
+    			</div>
+  			</div>             
+        </fieldset>
+    </form>
+    
+    
+<!--   pattern="^[a-zA-Z]{1,}$" maxlength="20" -->     
+    
