@@ -42,15 +42,16 @@
 	#end
  
             <!-- Input for ${attribute.name} -->
-            <div class="form-group">
+            <div class="form-group has-feedback">
               <label class="col-md-4 control-label" for="${attribute.name}">${attribute.name}#if(${attribute.mandatory})<span style="color:red;">*</span>#end</label>              
 #if(${attribute.columnType.toLowerCase()}=="date" ||${attribute.columnType.toLowerCase()}=="timestamp")                                 
               <div class="col-md-6">
                   <div class="input-group">
                     <span class="input-group-addon"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i></span>     
                     <input name="${attribute.name}" class="form-control input-md date" id="${attribute.name}" type="text" placeholder="$placeholderText"#if(${attribute.mandatory}) required#end>
+					<span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                   </div>
-              	<span class="help-block">$helpText</span>  
+              	<span class="help-block with-errors">$helpText</span>  
               </div>
 #else
 #if($inputIcon != "")
@@ -58,13 +59,15 @@
 			  	<div class="input-group">
               		<span class="input-group-addon"><i class="fa $inputIcon fa-fw" aria-hidden="true"></i></span>     
  	            	<input id="${attribute.name}" name="${attribute.name}" type="text" placeholder="$placeholderText" class="form-control input-md"#if(${attribute.columnType.toLowerCase()}=="varchar") maxlength="${attribute.columnSize}"#end#if(${attribute.mandatory}) required#end>
+					<span class="glyphicon form-control-feedback" aria-hidden="true"></span>
               	</div>
-              	<span class="help-block">$helpText</span>  
+              	<span class="help-block with-errors">$helpText</span>  
               </div>              	
 #else
               <div class="col-md-6">
                 <input id="${attribute.name}" name="${attribute.name}" type="text" placeholder="$placeholderText" class="form-control input-md"#if(${attribute.columnType.toLowerCase()}=="varchar") maxlength="${attribute.columnSize}"#end#if(${attribute.mandatory}) required#end>
-              	<span class="help-block">$helpText</span>  
+				<span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+              	<span class="help-block with-errors">$helpText</span>  
               </div>
 #end
 #end

@@ -141,6 +141,18 @@
       "object": false
     },
     {
+      "columnName": "dateJoinedCompany",
+      "columnType": "date",
+      "primaryKey": false,
+      "foreignKey": true,
+      "indexed": false,
+      "searchable": false,
+      "visible": true,
+      "mandatory": false,
+      "validated": false,
+      "object": false
+    },    
+    {
       "columnName": "salesRepEmployeeId",
       "columnType": "INT UNSIGNED",
       "columnSize": 10,

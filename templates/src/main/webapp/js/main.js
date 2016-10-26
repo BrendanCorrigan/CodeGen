@@ -56,12 +56,9 @@ $(document).ready(function () {
 	};
     
     
-    
-    
 	// ====================================================================	
 	// Create the table configuration
 	// ====================================================================    
-    
 
     var grid = $('#genericTable').bootgrid({
        formatters: {
@@ -69,9 +66,7 @@ $(document).ready(function () {
            "searchableCheck": function(column, row){ if (row.searchable) return "<span class='fa fa-check'></span>"; },
            "mandatoryCheck": function(column, row){ if (row.mandatory) return "<span class='fa fa-check'></span>"; },
 
-            "commands": function(column, row)
-            {
-
+           "commands": function(column, row) {
                 return "<button type='button' class='btn btn-small btn-default command-edit' data-row-id='" + row.${bean.primaryKey.name} + "' data-toggle='modal' data-target='#genericModal'><span class='fa fa-pencil'></span></button> " + 
                 "<button type='button' class='btn btn-danger btn-small btn-default command-delete' data-row-id='" + row.${bean.primaryKey.name} + "' data-toggle='modal' data-target='#confirmDeletion'><span class='fa fa-trash-o'></span></button>";
             }
@@ -86,13 +81,14 @@ $(document).ready(function () {
                         
             $('#genericForm')[0].reset()
             $('#genericForm').validator('destroy').validator()            
+
             populateForm({});
-            //populateForm(selectedItem[0]);
             get${bean.name}(selectedId);
             
             $('#createConfirmButton').hide();
             $('#updateConfirmButton').show();
             $('#modeText').text("Make changes to record: " + selectedId);
+            $('#modal_alert').hide();
 
             // ----------------------------------------------------------------
             // Show the modal window
@@ -113,7 +109,7 @@ $(document).ready(function () {
             // record you want to delete.
             // ----------------------------------------------------------------
             
-            var deleteConfirmMessage = selectedItem[0].firstName + " " + selectedItem[0].lastName;
+            var deleteConfirmMessage = " - ${bean.primaryKey.name}: " + selectedId;
             
             $(".modal-body #entryToDelete").text(deleteConfirmMessage);
             
@@ -125,112 +121,97 @@ $(document).ready(function () {
         });
         
     });
-    
-    
-	
-	// ====================================================================	
-	// Deal with button actions
-	// ====================================================================
 
-    //--------------------------------------------------
+    // Create an "Add New Entry" button on the table header bar
+    $('#genericTable-header .actionBar').prepend('<div style="float: left !important;"><button id="createItemButton" type="button" class="btn btn-primary" data-toggle="modal" data-target="#genericModal">Add new entry</button></div>');
+    	
+	// ====================================================================	
+    // Deal with button actions
+	// ====================================================================	
+
+    // --------------------------------------------------------------------
     // Create a new Entry
-    //--------------------------------------------------
+    // --------------------------------------------------------------------
 
     $('#createItemButton').on('click', function () {
 
         $('#createConfirmButton').show();
         $('#updateConfirmButton').hide();
         $('#modeText').text("Create a new record...");
-        
+        $('#modal_alert').hide();
+
+        // Reset the validation on the form
         $('#genericForm')[0].reset()
         $('#genericForm').validator('destroy').validator()
-	populateForm({});
         
-
+        // Create a new empty form
+        populateForm({});        
+        
     });
         
     $('#createConfirmButton').on('click', function () {
 
-    	if (!$('#createConfirmButton').hasClass('disabled')) {
-    		console.log("The Confirm Create button has been disabled.")
-		var newEntry = get${bean.name}FromForm();
-		
-        console.log("CONFIRM UPDATE PRESSED FOR ID: " + JSON.stringify(newEntry));
-		
-		if(!newEntry.${bean.primaryKey.name}) {
+    	// Only save if the form has no errors
+       	if (!$('#genericForm').validator('validate').has('.has-error').length ) {
 
-            // should validate all fields to make sure that they have valid values.
-            // if all is well the record can be updated.
-            
-            create${bean.name}(newEntry);
-            
-            // close the modal window once data has been saved successfully.
-            $('#genericModal').modal("hide");
-            
-        } else {
-            console.log("ID IS NOT NULL: " + newEntry.${bean.primaryKey.name});
-        }
+    		var newEntry = get${bean.name}FromForm();
+
+    		// sanity check the data!
+			if(!newEntry.${bean.primaryKey.name}) {
+	
+	            // should validate all fields to make sure that they have valid values.
+	            // if all is well the record can be updated.
+	            
+	            create${bean.name}(newEntry);
+	            	            
+	        } else {
+	            console.log("ID IS NOT NULL: " + newEntry.${bean.primaryKey.name});
+	        }
     	}
-
     });    
     
-
-    //--------------------------------------------------
+    // --------------------------------------------------------------------
     // Update existing Entry...
-    //--------------------------------------------------
+    // --------------------------------------------------------------------
     
     $('#updateConfirmButton').on('click', function () {
 
-    	if (!$('#updateConfirmButton').hasClass('disabled')) {
-    		console.log("The Confirm Update button has been disabled.")
+    	// Only save if the form has no errors
+       	if (!$('#genericForm').validator('validate').has('.has-error').length ) {
     	
-        var updatedEntry = get${bean.name}FromForm();
-        
-        // sanity check the data...
-        if (updatedEntry.${bean.primaryKey.name} === selectedId) {
-            // should validate all fields to make sure that they have valid values.
-
-            // if all is well the record can be updated.
-            update${bean.name}(updatedEntry);            
-            
-            // close the modal window once data has been updated successfully.
-            $('#genericModal').modal("hide");                                    
-            
-        } else {
-            // there has been a problem - the selected entry and the updated entry
-            // have different keys. This is a problem.
-
-            console.log("Updated ID and Selected Item ID don't match: " + updatedEntry.${bean.primaryKey.name} + " vs " + selectedId);
+	        var updatedEntry = get${bean.name}FromForm();
+	        
+	        // sanity check the data...
+	        if (updatedEntry.${bean.primaryKey.name} === selectedId) {
+	            // should validate all fields to make sure that they have valid values.
+	
+	            // if all is well the record can be updated.
+	            update${bean.name}(updatedEntry);            
+	            	            
+	        } else {
+	            // there has been a problem - the selected entry and the updated entry
+	            // have different keys. This is a problem.	
+	            console.log("Updated ID and Selected Item ID don't match: " + updatedEntry.${bean.primaryKey.name} + " vs " + selectedId);
 	        }
-
         }
-
     });
 
-
-    //--------------------------------------------------
+    // --------------------------------------------------------------------
     // Delete function 
-    //--------------------------------------------------
+    // --------------------------------------------------------------------
     
     $('#deleteConfirmButton').on('click', function() {
-
     	delete${bean.name}(selectedId);
-
     });
-
     
     
-    
-    
-    
-    
-	// ====================================================================
+	// ====================================================================	
 	// Ajax requests
-	// ====================================================================
+	// ====================================================================	
 
-    // ----------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------
 	// GET
-    // ----------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------
 	function get${bean.name}(id) {
 		$.ajax({
 			type : "GET",
@@ -240,21 +221,19 @@ $(document).ready(function () {
 			
 			success : function ( data, status, jqXHR ) {
 				console.log("get${bean.name} status: " + status + " data: " + JSON.stringify(data));
-				populateForm(data);
-				
+				populateForm(data);				
 			},
 			
-			error : function (jqXHR, status) {
-				console.log("get${bean.name} status: " + status);
-												
+			error : function (jqXHR, status, text) {
+				console.log("get${bean.name} status: " + status + " text: " + text);												
 			}		
 			
 		});
 	}
 	
-    // ----------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------
 	// GET
-    // ----------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------
 	function get${bean.name}s() {
 		$.ajax({
 			type : "GET",
@@ -273,17 +252,17 @@ $(document).ready(function () {
 				
 			},
 			
-			error : function (jqXHR, status) {
-				console.log("get${bean.name}s status: " + status);
+			error : function (jqXHR, status, text) {
+				console.log("get${bean.name}s status: " + status + " text: " + text);
 												
 			}		
 			
 		});
 	}
 
-    // ----------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------
 	// DELETE
-    // ----------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------
 	function delete${bean.name}(id) {
 		$.ajax({
 			type : "DELETE",
@@ -306,17 +285,17 @@ $(document).ready(function () {
                 }				
 			},
 			
-			error : function (jqXHR, status) {
-				console.log("delete${bean.name} status: " + status);												
+			error : function (jqXHR, status, text) {
+				console.log("delete${bean.name} status: " + status + " text: " + text);												
 			}		
 			
 		});
 	}
 	
 	
-    // ----------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------
 	// POST
-    // ----------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------
 	function create${bean.name}($instanceName) {
 		$.ajax({
 			type : "POST",
@@ -331,21 +310,25 @@ $(document).ready(function () {
                 
                 tableData.push(data);
                 $("#genericTable").bootgrid('append', [data]);
-				
+
+	            // close the modal window once data has been updated successfully.
+	            $('#genericModal').modal("hide");                                    
+                
 			},
 			
-			error : function (jqXHR, status) {
-				console.log("create${bean.name} - status: " + status);
+			error : function (jqXHR, status, text) {
+				console.log("create{bean.name} - status: " + status + " text: " + text);
+				$('#modal_alert_message').text(text);
+				$('#modal_alert').show();
 												
 			}
 			
 		});
 	}
-
 	
-    // ----------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------
 	// PUT
-    // ----------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------
 	function update${bean.name}($instanceName) {
 		$.ajax({
 			type : "PUT",
@@ -367,51 +350,24 @@ $(document).ready(function () {
                     // Remove the row from the table.
                     $("#genericTable").bootgrid('remove', [selectedId]);
                     $("#genericTable").bootgrid('append', [data]);
+                }
+                
+	            // close the modal window once data has been updated successfully.
+	            $('#genericModal').modal("hide");                                    
 
-                }                				
 			},
 			
 			error : function (jqXHR, status, text) {
 				console.log("update${bean.name} - status: " + status + " text: " + text);
+				$('#modal_alert_message').text(text);
+				$('#modal_alert').show();
 												
 			}
 						
 		});
 	}
-
 	
-	// ====================================================================
-	// Validation
-	// ====================================================================
-	
-	function validate${bean.name}($instanceName) {
-		var valid = true;
-		
-		return valid;
-	};
-
-    
-    
-	// ====================================================================
-    // Helper function to retrieve content of a form...
-	// ====================================================================
-    
-    $.fn.serializeObject = function () {
-        var o = {};
-        var a = this.serializeArray();
-        $.each(a, function () {
-            if (o[this.name] !== undefined) {
-                if (!o[this.name].push) {
-                    o[this.name] = [o[this.name]];
-                }
-                o[this.name].push(this.value || '');
-            } else {
-                o[this.name] = this.value || '';
-            }
-        });
-        return o;
-    };    
-    
+	// ====================================================================	
     
     get${bean.name}s();
 	
